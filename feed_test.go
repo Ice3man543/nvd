@@ -132,64 +132,6 @@ func TestClient_SearchFeed(t *testing.T) {
 	teardown()
 }
 
-func TestClient_NeedNVDUpdate(t *testing.T) {
-	tests := []struct {
-		want           bool
-		year           string
-		alreadyUpdated bool
-		meta           string
-	}{
-		// needNVDUpdate true; stale meta sha256 hash
-		{
-			true,
-			"2002",
-			false,
-			`lastModifiedDate:2020-01-11T05:13:47-05:00
-size:19924894
-zipSize:1408391
-gzSize:1408255
-sha256:qwertyuiop@[
-`,
-		},
-		// needNVDUpdate false; meta file already up-to-date
-		{
-			false,
-			"2003",
-			true,
-			"",
-		},
-	}
-
-	for i, tt := range tests {
-		t.Logf("run subtest %d", i+1)
-		var err error
-
-		cl, err := NewClient("tmp")
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		if !tt.alreadyUpdated {
-			err = cl.saveNVDMeta(tt.year, []byte(tt.meta))
-			if err != nil {
-				t.Fatal(err)
-			}
-		} else {
-			_, err = cl.fetchRemoteMeta(tt.year)
-			if err != nil {
-				t.Fatal(err)
-			}
-		}
-		got, err := cl.needNVDUpdate(tt.year)
-		assert.NoError(t, err)
-		if got != tt.want {
-			t.Errorf("got %v != want %v; want %v", got, tt.want, tt.want)
-		}
-		teardown()
-	}
-
-}
-
 func TestFetchReserved(t *testing.T) {
 	tests := []struct {
 		wantDate  string
@@ -223,5 +165,29 @@ func teardown() {
 		if err := os.RemoveAll(d); err != nil {
 			fmt.Println(err)
 		}
+	}
+}
+
+func TestClient_FetchCVE_Bugtest(t *testing.T) {
+	tests := []struct {
+		cveID string
+	}{
+		{"CVE-2011-5106"},
+	}
+
+	for _, tt := range tests {
+		t.Logf("run subtest %s", tt.cveID)
+
+		cl, err := NewClient("tmp")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		got, err := cl.FetchCVE(tt.cveID)
+		assert.NoError(t, err)
+		assert.NotNil(t, got.CVE.References.ReferenceData)
+		fmt.Println(got)
+
+		teardown()
 	}
 }

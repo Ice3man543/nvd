@@ -4,14 +4,11 @@ import (
 	"bytes"
 	"compress/gzip"
 	"io"
-	"io/ioutil"
 	"os"
 )
 
 func decompressGZ(rc io.ReadCloser) []byte {
-	byteArray, _ := ioutil.ReadAll(rc)
-	buffer := bytes.NewBuffer(byteArray)
-	reader, _ := gzip.NewReader(buffer)
+	reader, _ := gzip.NewReader(rc)
 	output := bytes.Buffer{}
 	output.ReadFrom(reader)
 	return output.Bytes()

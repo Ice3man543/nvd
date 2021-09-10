@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"os"
 	"path"
-	"regexp"
 	"strconv"
 )
 
@@ -73,18 +72,12 @@ func (c *Client) FetchUpdatedCVEs() ([]CVEItem, error) {
 }
 
 func (c *Client) updateFeed(year string) error {
-	need, err := c.needNVDUpdate(year)
+	err := c.downloadFeed(
+		fmt.Sprintf(nvdDataFeeds, year),
+		c.pathToFeed(year),
+	)
 	if err != nil {
-		return fmt.Errorf("error checking whether %s feed needs update: %v", year, err)
-	}
-	if need {
-		err = c.downloadFeed(
-			fmt.Sprintf(nvdDataFeeds, year),
-			c.pathToFeed(year),
-		)
-		if err != nil {
-			return fmt.Errorf("error fetching %s remote feed: %v", year, err)
-		}
+		return fmt.Errorf("error fetching %s remote feed: %v", year, err)
 	}
 	return nil
 }
@@ -93,9 +86,12 @@ func (c *Client) fetchNVDCVE(cveID string) (cve CVEItem, err error) {
 	yi, _ := ParseCVEID(cveID)
 	year := strconv.Itoa(yi)
 
-	err = c.updateFeed(year)
-	if err != nil {
-		return CVEItem{}, err
+	// Update feed if local database doesn't exist yet.
+	if _, err := os.Stat(c.pathToFeed(year)); os.IsNotExist(err) {
+		err = c.updateFeed(year)
+		if err != nil {
+			return CVEItem{}, err
+		}
 	}
 
 	cve, err = c.searchFeed(year, cveID)
@@ -109,33 +105,8 @@ func (c *Client) fetchNVDCVE(cveID string) (cve CVEItem, err error) {
 	return cve, nil
 }
 
-func (c *Client) needNVDUpdate(year string) (bool, error) {
-	// TODO remove redundant noNeed
-	const need, noNeed bool = true, false
-
-	var emptyMeta NVDMeta
-	localMeta, err := c.fetchLocalMeta(year)
-	if localMeta == emptyMeta && err == nil {
-		return need, nil
-	}
-
-	remoteMeta, err := c.fetchRemoteMeta(year)
-	if err != nil {
-		return noNeed, err
-	}
-
-	if remoteMeta.Sha256 == localMeta.Sha256 {
-		return noNeed, nil
-	}
-	return need, nil
-}
-
 func (c *Client) pathToFeed(year string) string {
 	return path.Join(c.feedDir, fmt.Sprintf("%s.json", year))
-}
-
-func (c *Client) pathToMeta(year string) string {
-	return path.Join(c.feedDir, fmt.Sprintf("%s.meta", year))
 }
 
 func (c *Client) loadFeed(year string) ([]byte, error) {
@@ -205,68 +176,6 @@ func (c *Client) downloadFeed(u, p string) (err error) {
 	_, err = file.Write(raw)
 	if err != nil {
 		return fmt.Errorf("error writing to local feed file %s: %v", p, err)
-	}
-	return nil
-}
-
-func (c *Client) fetchLocalMeta(year string) (NVDMeta, error) {
-	var meta NVDMeta
-	p := c.pathToMeta(year)
-	raw, err := ioutil.ReadFile(p)
-	if err != nil {
-		return meta, err
-	}
-
-	return parseRawNVDMeta(raw), nil
-}
-
-// FetchNvdMeta fetch NVD meta data
-func (c *Client) fetchRemoteMeta(year string) (NVDMeta, error) {
-	var meta NVDMeta
-
-	url := fmt.Sprintf(nvdDataFeedsMeta, year)
-	resp, err := http.Get(url)
-	if err != nil {
-		return meta, err
-	}
-	defer resp.Body.Close()
-
-	byteArray, _ := ioutil.ReadAll(resp.Body)
-	err = c.saveNVDMeta(year, byteArray)
-	if err != nil {
-		return meta, err
-	}
-
-	meta = parseRawNVDMeta(byteArray)
-	return meta, nil
-}
-
-// parseRawNVDMeta convert meta data to NVDMeta
-func parseRawNVDMeta(meta []byte) NVDMeta {
-	var metaModel NVDMeta
-
-	result := regexp.MustCompile("\r\n|\n\r|\n|\r").Split(string(meta), -1)
-	metaModel.LastModifiedDate = regexp.MustCompile(":").Split(result[0], -1)[1]
-	metaModel.Size = regexp.MustCompile(":").Split(result[1], -1)[1]
-	metaModel.ZipSize = regexp.MustCompile(":").Split(result[2], -1)[1]
-	metaModel.GzSize = regexp.MustCompile(":").Split(result[3], -1)[1]
-	metaModel.Sha256 = regexp.MustCompile(":").Split(result[4], -1)[1]
-
-	return metaModel
-}
-
-// saveNVDMeta store meta data to feeds/
-func (c *Client) saveNVDMeta(year string, meta []byte) error {
-	p := c.pathToMeta(year)
-	file, err := os.Create(p)
-	if err != nil {
-		return fmt.Errorf("error creating %s: %v", p, err)
-	}
-	defer file.Close()
-
-	_, err = file.Write(meta)
-	if err != nil {
-		return fmt.Errorf("error writing to %s: %v", p, err)
 	}
 	return nil
 }
