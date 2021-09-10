@@ -170,8 +170,9 @@ func (c *Client) searchFeed(year string, cveID string) (CVEItem, error) {
 		}
 	}
 
-	var cve CVEItem
 	for decoder.More() {
+		var cve CVEItem
+
 		err = decoder.Decode(&cve)
 		if err != nil {
 			return CVEItem{}, err
