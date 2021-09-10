@@ -163,9 +163,15 @@ func (c *Client) downloadFeed(u, p string) (err error) {
 	if err != nil {
 		return fmt.Errorf("error http request to %s: %v", u, err)
 	}
+	if resp.Body == nil {
+		return fmt.Errorf("no response body for %s", u)
+	}
 	defer resp.Body.Close()
 
-	raw := decompressGZ(resp.Body)
+	raw, err := decompressGZ(resp.Body)
+	if err != nil {
+		return fmt.Errorf("could not decompress response to %s: %v", u, err)
+	}
 
 	file, err := os.Create(p)
 	if err != nil {
