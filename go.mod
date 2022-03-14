@@ -1,4 +1,4 @@
-module github.com/Ice3man543/nvd
+module github.com/projectdiscovery/nvd
 
 go 1.15
 
