@@ -165,7 +165,7 @@ func (c *Client) searchFeed(year string, cveID string) (CVEItem, error) {
 		}
 		if tok == "CVE_Items" {
 			// Read next opening bracket
-			decoder.Token()
+			_, _ = decoder.Token()
 			break
 		}
 	}

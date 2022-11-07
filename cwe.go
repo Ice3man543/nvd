@@ -33,7 +33,7 @@ func (c *Client) FetchCWE() (cwes WeaknessCatalog, err error) {
 		defer f.Close()
 
 		raw, _ := ioutil.ReadAll(resp.Body)
-		f.Write(raw)
+		_, _ = f.Write(raw)
 	}
 
 	// Open and unzip file to WeaknessCatalog struct
