@@ -216,7 +216,7 @@ func (c *Client) fetchLocalMeta(year string) (NVDMeta, error) {
 		return meta, err
 	}
 
-	return parseRawNVDMeta(raw), nil
+	return parseRawNVDMeta(raw)
 }
 
 // FetchNvdMeta fetch NVD meta data
@@ -236,22 +236,34 @@ func (c *Client) fetchRemoteMeta(year string) (NVDMeta, error) {
 		return meta, err
 	}
 
-	meta = parseRawNVDMeta(byteArray)
-	return meta, nil
+	return parseRawNVDMeta(byteArray)
 }
 
 // parseRawNVDMeta convert meta data to NVDMeta
-func parseRawNVDMeta(meta []byte) NVDMeta {
+func parseRawNVDMeta(meta []byte) (NVDMeta, error) {
 	var metaModel NVDMeta
 
 	result := regexp.MustCompile("\r\n|\n\r|\n|\r").Split(string(meta), -1)
-	metaModel.LastModifiedDate = regexp.MustCompile(":").Split(result[0], -1)[1]
-	metaModel.Size = regexp.MustCompile(":").Split(result[1], -1)[1]
-	metaModel.ZipSize = regexp.MustCompile(":").Split(result[2], -1)[1]
-	metaModel.GzSize = regexp.MustCompile(":").Split(result[3], -1)[1]
-	metaModel.Sha256 = regexp.MustCompile(":").Split(result[4], -1)[1]
+	if len(result) < 5 {
+		return metaModel, errors.New("insufficient length")
+	}
+	if res := regexp.MustCompile(":").Split(result[0], -1); len(res) > 1 {
+		metaModel.LastModifiedDate = res[1]
+	}
+	if res := regexp.MustCompile(":").Split(result[1], -1); len(res) > 1 {
+		metaModel.Size = res[1]
+	}
+	if res := regexp.MustCompile(":").Split(result[2], -1); len(res) > 1 {
+		metaModel.ZipSize = res[1]
+	}
+	if res := regexp.MustCompile(":").Split(result[3], -1); len(res) > 1 {
+		metaModel.GzSize = res[1]
+	}
+	if res := regexp.MustCompile(":").Split(result[4], -1); len(res) > 1 {
+		metaModel.Sha256 = res[1]
+	}
 
-	return metaModel
+	return metaModel, nil
 }
 
 // saveNVDMeta store meta data to feeds/
