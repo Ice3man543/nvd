@@ -8,6 +8,9 @@ import (
 	"os"
 	"path"
 	"strings"
+
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 // VendorsProducts parse CPEs and returns slice of Vendors containing Products
@@ -53,6 +56,7 @@ func generateVendorsProducts(cpeURIs []string) []Vendor {
 	}
 
 	// Convert staging map to Vendors slice with each Vendor containing Products slice
+	caser := cases.Title(language.Und)
 	var vendors []Vendor
 	for tmpVendor, tmpURIs := range tmp {
 		// Build Products slice
@@ -64,7 +68,7 @@ func generateVendorsProducts(cpeURIs []string) []Vendor {
 		vendors = append(vendors, Vendor{
 			// Name:     strings.Title(strings.Join(strings.Split(tmpVendor, "-"), " ")),
 			// TODO splitmulti on vendor name with -_ separators
-			Name:     strings.Title(tmpVendor),
+			Name:     caser.String(tmpVendor),
 			Products: products,
 		})
 	}
@@ -79,9 +83,10 @@ func urishortToProduct(urishort string) Product {
 		return strings.FieldsFunc(s, splitter)
 	}
 
+	caser := cases.Title(language.Und)
 	productStr := strings.Split(urishort, ":")[1]
 	return Product{
-		Name:     strings.Title(strings.Join(splitMulti(productStr, "-_"), " ")),
+		Name:     caser.String(strings.Join(splitMulti(productStr, "-_"), " ")),
 		URIShort: urishort,
 	}
 }

@@ -13,7 +13,7 @@ func decompressGZ(rc io.ReadCloser) []byte {
 	buffer := bytes.NewBuffer(byteArray)
 	reader, _ := gzip.NewReader(buffer)
 	output := bytes.Buffer{}
-	output.ReadFrom(reader)
+	_, _ = output.ReadFrom(reader)
 	return output.Bytes()
 }
 
