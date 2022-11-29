@@ -12,9 +12,9 @@ import (
 )
 
 const (
-	nvdDataFeeds     = "https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-%s.json.gz"
-	nvdDataFeedsMeta = "https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-%s.meta"
-	nvdCPEMatchFeed  = "https://nvd.nist.gov/feeds/json/cpematch/1.0/nvdcpematch-1.0.json.gz"
+	nvdDataFeeds = "https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-%s.json.gz"
+	// nvdDataFeedsMeta = "https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-%s.meta"
+	nvdCPEMatchFeed = "https://nvd.nist.gov/feeds/json/cpematch/1.0/nvdcpematch-1.0.json.gz"
 )
 
 // ErrNotFound occurs when CVE is expected but no result is returned from fetch operations
