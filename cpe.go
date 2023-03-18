@@ -14,9 +14,11 @@ import (
 func (cve *CVEItem) VendorsProducts() []Vendor {
 	// Get all Configuration.Nodes -> CPEMatch -> CPE23URI
 	var cpeURIs []string
-	for _, node := range cve.Configurations.Nodes {
-		for _, cpe := range node.CPEMatch {
-			cpeURIs = append(cpeURIs, cpe.CPE23URI)
+	for _, config := range cve.Configurations {
+		for _, node := range config.Nodes {
+			for _, cpe := range node.CpeMatch {
+				cpeURIs = append(cpeURIs, cpe.Criteria)
+			}
 		}
 	}
 	return generateVendorsProducts(cpeURIs)

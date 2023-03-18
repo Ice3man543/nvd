@@ -51,14 +51,19 @@ type CVEItem struct {
 			} `json:"description_data"`
 		} `json:"description"`
 	} `json:"cve"`
-	Configurations struct {
-		CVEDataVersion string `json:"CVE_data_version"`
-		Nodes          []struct {
+	Configurations []struct {
+		Nodes []struct {
 			Operator string `json:"operator"`
-			CPEMatch []struct {
-				Vulnerable bool   `json:"vulnerable"`
-				CPE23URI   string `json:"cpe23Uri"`
-			} `json:"cpe_match"`
+			Negate   bool   `json:"negate"`
+			CpeMatch []struct {
+				Vulnerable            string `json:"vulnerable"`
+				Criteria              string `json:"criteria"`
+				MatchCriteriaID       string `json:"matchCriteriaId"`
+				VersionStartExcluding string `json:"versionStartExcluding,omitempty"`
+				VersionStartIncluding string `json:"versionStartIncluding,omitempty"`
+				VersionEndExcluding   string `json:"versionEndExcluding,omitempty"`
+				VersionEndIncluding   string `json:"versionEndIncluding,omitempty"`
+			} `json:"cpeMatch"`
 		} `json:"nodes"`
 	} `json:"configurations"`
 	Impact struct {
