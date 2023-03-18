@@ -11,10 +11,10 @@ import (
 )
 
 // VendorsProducts parse CPEs and returns slice of Vendors containing Products
-func (cve *CVEItem) VendorsProducts() []Vendor {
+func (cve *Vulnerability) VendorsProducts() []Vendor {
 	// Get all Configuration.Nodes -> CPEMatch -> CPE23URI
 	var cpeURIs []string
-	for _, config := range cve.Configurations {
+	for _, config := range cve.Cve.Configurations {
 		for _, node := range config.Nodes {
 			for _, cpe := range node.CpeMatch {
 				cpeURIs = append(cpeURIs, cpe.Criteria)

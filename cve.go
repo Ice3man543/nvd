@@ -1,7 +1,10 @@
 package nvd
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"regexp"
 	"strconv"
 	"strings"
@@ -12,6 +15,25 @@ import (
 var CVERx = regexp.MustCompile(`^CVE-([0-9]{4})-[0-9]{4,}$`)             // Implied Strict
 var CVERxLoose = regexp.MustCompile(`CVE[^\w]*\d{4}[^\w]+\d{4,}`)        // Loose
 var CVERxStrict = regexp.MustCompile(`^CVE-\d{4}-(0\d{3}|[1-9]\d{3,})$`) // Strict
+
+func (c *ClientV2) FetchCVE(cveID string) (Vulnerability, error) {
+	url := fmt.Sprintf("%s?cveId=%s", c.endpoint, cveID)
+	resp, err := http.Get(url)
+	if err != nil {
+		return Vulnerability{}, err
+	}
+	if resp.Body == nil {
+		return Vulnerability{}, fmt.Errorf("no CVE found for %s", cveID)
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return Vulnerability{}, err
+	}
+	vuln := Vulnerability{}
+	err = json.Unmarshal(body, vuln)
+	return vuln, err
+}
 
 // IsCVEIDLoose matches on "Loose" specification from MITRE, and ensures that
 // 1. there is a CVE prefix,

@@ -50,7 +50,7 @@ func TestClient_FetchCVE(t *testing.T) {
 		} else {
 			assert.NoError(t, err)
 		}
-		assert.Equal(t, tt.cveID, got.CVE.CVEDataMeta.ID)
+		assert.Equal(t, tt.cveID, got.Cve.CVEDataMeta.ID)
 		if tt.wantReserved {
 			assert.True(t, got.Reserved)
 		} else {
@@ -78,7 +78,7 @@ func TestClient_FetchCVE_ReferenceData(t *testing.T) {
 
 		got, err := cl.FetchCVE(tt.cveID)
 		assert.NoError(t, err)
-		assert.NotNil(t, got.CVE.References.ReferenceData)
+		assert.NotNil(t, got.Cve.References.ReferenceData)
 		fmt.Println(got)
 
 		teardown()
@@ -127,7 +127,7 @@ func TestClient_SearchFeed(t *testing.T) {
 	if err != nil {
 		assert.NoError(t, err)
 	}
-	assert.Equal(t, cveID, got.CVE.CVEDataMeta.ID)
+	assert.Equal(t, cveID, got.Cve.CVEDataMeta.ID)
 
 	teardown()
 }
@@ -185,7 +185,7 @@ func TestClient_FetchCVE_Bugtest(t *testing.T) {
 
 		got, err := cl.FetchCVE(tt.cveID)
 		assert.NoError(t, err)
-		assert.NotNil(t, got.CVE.References.ReferenceData)
+		assert.NotNil(t, got.Cve.References.ReferenceData)
 		fmt.Println(got)
 
 		teardown()
