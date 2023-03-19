@@ -2,12 +2,39 @@ package nvd
 
 import (
 	"bufio"
+	"encoding/json"
+	"fmt"
 	"os"
 	"path"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func TestFetchCVEv2(t *testing.T) {
+	cliv2 := NewClientV2()
+	testCases := []string{"CVE-2019-1010218", "CVE-2022-0149"}
+
+	for _, cveId := range testCases {
+		cve, err := cliv2.FetchCVE(cveId)
+		assert.Equal(t, nil, err)
+
+		expect, err := LoadExpectedCVEOutput(cveId)
+		assert.Equal(t, nil, err)
+
+		assert.Equal(t, expect, cve)
+	}
+}
+
+func LoadExpectedCVEOutput(cveId string) (Vulnerability, error) {
+	data, err := os.ReadFile(fmt.Sprintf("testdata/expected-%s.json", cveId))
+	if err != nil {
+		return Vulnerability{}, err
+	}
+	var vuln Vulnerability
+	err = json.Unmarshal(data, &vuln)
+	return vuln, err
+}
 
 func TestParseCVEID(t *testing.T) {
 	tests := []struct {

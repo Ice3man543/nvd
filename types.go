@@ -21,98 +21,100 @@ type CVEResults struct {
 }
 
 type Vulnerability struct {
-	Cve struct {
-		ID                    string       `json:"id"`
-		SourceIdentifier      string       `json:"sourceIdentifier,omitempty"`
-		Published             string       `json:"published"`
-		LastModified          string       `json:"lastModified"`
-		VulnStatus            string       `json:"vulnStatus,omitempty"`
-		EvaluatorComment      string       `json:"evaluatorComment,omitempty"`
-		EvaluatorSolution     string       `json:"evaluatorSolution,omitempty"`
-		EvaluatorImpact       string       `json:"evaluatorImpact,omitempty"`
-		CisaExploitAdd        string       `json:"cisaExploitAdd,omitempty"`
-		CisaActionDue         string       `json:"cisaActionDue,omitempty"`
-		CisaRequiredAction    string       `json:"cisaRequiredAction,omitempty"`
-		CisaVulnerabilityName string       `json:"cisaVulnerabilityName,omitempty"`
-		Descriptions          []LangString `json:"descriptions"`
-		References            []struct {
-			URL    string   `json:"url"`
-			Source string   `json:"source,omitempty"`
-			Tags   []string `json:"tags,omitempty"`
-		} `json:"references"`
-		Metrics struct {
-			CvssMetricV31 []struct {
-				Source   string `json:"source"`
-				Type     string `json:"type"`
-				CvssData struct {
-					Version               string  `json:"version"`
-					VectorString          string  `json:"vectorString"`
-					AttackVector          string  `json:"attackVector"`
-					AttackComplexity      string  `json:"attackComplexity"`
-					PrivilegesRequired    string  `json:"privilegesRequired"`
-					UserInteraction       string  `json:"userInteraction"`
-					Scope                 string  `json:"scope"`
-					ConfidentialityImpact string  `json:"confidentialityImpact"`
-					IntegrityImpact       string  `json:"integrityImpact"`
-					AvailabilityImpact    string  `json:"availabilityImpact"`
-					BaseScore             float64 `json:"baseScore"`
-					BaseSeverity          string  `json:"baseSeverity"`
-				} `json:"cvssData"`
-				ExploitabilityScore float64 `json:"exploitabilityScore"`
-				ImpactScore         float64 `json:"impactScore"`
-			} `json:"cvssMetricV31"`
-			CvssMetricV2 []struct {
-				Source   string `json:"source"`
-				Type     string `json:"type"`
-				CvssData struct {
-					Version               string  `json:"version"`
-					VectorString          string  `json:"vectorString"`
-					AccessVector          string  `json:"accessVector"`
-					AccessComplexity      string  `json:"accessComplexity"`
-					Authentication        string  `json:"authentication"`
-					ConfidentialityImpact string  `json:"confidentialityImpact"`
-					IntegrityImpact       string  `json:"integrityImpact"`
-					AvailabilityImpact    string  `json:"availabilityImpact"`
-					BaseScore             float64 `json:"baseScore"`
-				} `json:"cvssData"`
-				BaseSeverity            string  `json:"baseSeverity"`
-				ExploitabilityScore     float64 `json:"exploitabilityScore"`
-				ImpactScore             float64 `json:"impactScore"`
-				AcInsufInfo             bool    `json:"acInsufInfo"`
-				ObtainAllPrivilege      bool    `json:"obtainAllPrivilege"`
-				ObtainUserPrivilege     bool    `json:"obtainUserPrivilege"`
-				ObtainOtherPrivilege    bool    `json:"obtainOtherPrivilege"`
-				UserInteractionRequired bool    `json:"userInteractionRequired"`
-			} `json:"cvssMetricV2"`
-		} `json:"metrics,omitempty"`
-		Weaknesses []struct {
-			Source      string       `json:"source"`
-			Type        string       `json:"type"`
-			Description []LangString `json:"description"`
-		} `json:"weaknesses,omitempty"`
-		Configurations []struct {
-			Operator string `json:"operator,omitempty"`
-			Negate   string `json:"negate,omitempty"`
-			Nodes    []struct {
-				Operator string `json:"operator"`
-				Negate   bool   `json:"negate,omitempty"`
-				CpeMatch []struct {
-					Vulnerable            string `json:"vulnerable"`
-					Criteria              string `json:"criteria"`
-					MatchCriteriaID       string `json:"matchCriteriaId"`
-					VersionStartExcluding string `json:"versionStartExcluding,omitempty"`
-					VersionStartIncluding string `json:"versionStartIncluding,omitempty"`
-					VersionEndExcluding   string `json:"versionEndExcluding,omitempty"`
-					VersionEndIncluding   string `json:"versionEndIncluding,omitempty"`
-				} `json:"cpeMatch"`
-			} `json:"nodes"`
-		} `json:"configurations,omitempty"`
-		VendorComments []struct {
-			Organization string `json:"organization"`
-			Comment      string `json:"comment"`
-			LastModified string `json:"lastModified"`
-		} `json:"vendorComments,omitempty"`
-	} `json:"cve"`
+	Cve Cve `json:"cve"`
+}
+
+type Cve struct {
+	ID                    string       `json:"id"`
+	SourceIdentifier      string       `json:"sourceIdentifier,omitempty"`
+	Published             string       `json:"published"`
+	LastModified          string       `json:"lastModified"`
+	VulnStatus            string       `json:"vulnStatus,omitempty"`
+	EvaluatorComment      string       `json:"evaluatorComment,omitempty"`
+	EvaluatorSolution     string       `json:"evaluatorSolution,omitempty"`
+	EvaluatorImpact       string       `json:"evaluatorImpact,omitempty"`
+	CisaExploitAdd        string       `json:"cisaExploitAdd,omitempty"`
+	CisaActionDue         string       `json:"cisaActionDue,omitempty"`
+	CisaRequiredAction    string       `json:"cisaRequiredAction,omitempty"`
+	CisaVulnerabilityName string       `json:"cisaVulnerabilityName,omitempty"`
+	Descriptions          []LangString `json:"descriptions"`
+	References            []struct {
+		URL    string   `json:"url"`
+		Source string   `json:"source,omitempty"`
+		Tags   []string `json:"tags,omitempty"`
+	} `json:"references"`
+	Metrics struct {
+		CvssMetricV31 []struct {
+			Source   string `json:"source"`
+			Type     string `json:"type"`
+			CvssData struct {
+				Version               string  `json:"version"`
+				VectorString          string  `json:"vectorString"`
+				AttackVector          string  `json:"attackVector"`
+				AttackComplexity      string  `json:"attackComplexity"`
+				PrivilegesRequired    string  `json:"privilegesRequired"`
+				UserInteraction       string  `json:"userInteraction"`
+				Scope                 string  `json:"scope"`
+				ConfidentialityImpact string  `json:"confidentialityImpact"`
+				IntegrityImpact       string  `json:"integrityImpact"`
+				AvailabilityImpact    string  `json:"availabilityImpact"`
+				BaseScore             float64 `json:"baseScore"`
+				BaseSeverity          string  `json:"baseSeverity"`
+			} `json:"cvssData"`
+			ExploitabilityScore float64 `json:"exploitabilityScore"`
+			ImpactScore         float64 `json:"impactScore"`
+		} `json:"cvssMetricV31"`
+		CvssMetricV2 []struct {
+			Source   string `json:"source"`
+			Type     string `json:"type"`
+			CvssData struct {
+				Version               string  `json:"version"`
+				VectorString          string  `json:"vectorString"`
+				AccessVector          string  `json:"accessVector"`
+				AccessComplexity      string  `json:"accessComplexity"`
+				Authentication        string  `json:"authentication"`
+				ConfidentialityImpact string  `json:"confidentialityImpact"`
+				IntegrityImpact       string  `json:"integrityImpact"`
+				AvailabilityImpact    string  `json:"availabilityImpact"`
+				BaseScore             float64 `json:"baseScore"`
+			} `json:"cvssData"`
+			BaseSeverity            string  `json:"baseSeverity"`
+			ExploitabilityScore     float64 `json:"exploitabilityScore"`
+			ImpactScore             float64 `json:"impactScore"`
+			AcInsufInfo             bool    `json:"acInsufInfo"`
+			ObtainAllPrivilege      bool    `json:"obtainAllPrivilege"`
+			ObtainUserPrivilege     bool    `json:"obtainUserPrivilege"`
+			ObtainOtherPrivilege    bool    `json:"obtainOtherPrivilege"`
+			UserInteractionRequired bool    `json:"userInteractionRequired"`
+		} `json:"cvssMetricV2"`
+	} `json:"metrics,omitempty"`
+	Weaknesses []struct {
+		Source      string       `json:"source"`
+		Type        string       `json:"type"`
+		Description []LangString `json:"description"`
+	} `json:"weaknesses,omitempty"`
+	Configurations []struct {
+		Operator string `json:"operator,omitempty"`
+		Negate   string `json:"negate,omitempty"`
+		Nodes    []struct {
+			Operator string `json:"operator"`
+			Negate   bool   `json:"negate,omitempty"`
+			CpeMatch []struct {
+				Vulnerable            bool   `json:"vulnerable"`
+				Criteria              string `json:"criteria"`
+				MatchCriteriaID       string `json:"matchCriteriaId"`
+				VersionStartExcluding string `json:"versionStartExcluding,omitempty"`
+				VersionStartIncluding string `json:"versionStartIncluding,omitempty"`
+				VersionEndExcluding   string `json:"versionEndExcluding,omitempty"`
+				VersionEndIncluding   string `json:"versionEndIncluding,omitempty"`
+			} `json:"cpeMatch"`
+		} `json:"nodes"`
+	} `json:"configurations,omitempty"`
+	VendorComments []struct {
+		Organization string `json:"organization"`
+		Comment      string `json:"comment"`
+		LastModified string `json:"lastModified"`
+	} `json:"vendorComments,omitempty"`
 }
 
 type LangString struct {

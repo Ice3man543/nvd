@@ -17,8 +17,7 @@ var CVERxLoose = regexp.MustCompile(`CVE[^\w]*\d{4}[^\w]+\d{4,}`)        // Loos
 var CVERxStrict = regexp.MustCompile(`^CVE-\d{4}-(0\d{3}|[1-9]\d{3,})$`) // Strict
 
 func (c *ClientV2) FetchCVE(cveID string) (Vulnerability, error) {
-	url := fmt.Sprintf("%s?cveId=%s", c.endpoint, cveID)
-	resp, err := http.Get(url)
+	resp, err := http.Get(fmt.Sprintf("%s?cveId=%s", c.endpoint, cveID))
 	if err != nil {
 		return Vulnerability{}, err
 	}
@@ -26,13 +25,21 @@ func (c *ClientV2) FetchCVE(cveID string) (Vulnerability, error) {
 		return Vulnerability{}, fmt.Errorf("no CVE found for %s", cveID)
 	}
 	defer resp.Body.Close()
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return Vulnerability{}, err
 	}
-	vuln := Vulnerability{}
-	err = json.Unmarshal(body, vuln)
-	return vuln, err
+	var cveData CVEResults
+	err = json.Unmarshal(body, &cveData)
+	if err != nil {
+		return Vulnerability{}, err
+	}
+	numCves := len(cveData.Vulnerabilities)
+	if numCves != 1 {
+		return Vulnerability{}, fmt.Errorf("unexpected output from NVD. Expecting exactly 1 vulnerability, got %d", numCves)
+	}
+	return cveData.Vulnerabilities[0], nil
 }
 
 // IsCVEIDLoose matches on "Loose" specification from MITRE, and ensures that

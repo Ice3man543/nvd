@@ -64,7 +64,7 @@ func TestCVEItem_VendorsProducts(t *testing.T) {
 		}},
 	}
 	for _, tt := range tests {
-		var cve Vulnerability
+		var cve CVEItem
 		json.Unmarshal([]byte(tt.cveBlob), &cve)
 		got := cve.VendorsProducts()
 		assert.Equal(t, tt.want, got)

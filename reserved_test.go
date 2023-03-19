@@ -17,9 +17,9 @@ func TestFetchReservedCVE(t *testing.T) {
 	for _, tt := range tests {
 		got, err := fetchReservedCVE(tt.cveID)
 		assert.NoError(t, err)
-		assert.Equal(t, tt.cveID, got.Cve.CVEDataMeta.ID)
+		assert.Equal(t, tt.cveID, got.CVE.CVEDataMeta.ID)
 		assert.NotNil(t, got.PublishedDate)
 		assert.True(t, got.Reserved)
-		assert.Nil(t, got.Cve.Description.DescriptionData)
+		assert.Nil(t, got.CVE.Description.DescriptionData)
 	}
 }
