@@ -45,25 +45,19 @@ type Cve struct {
 	} `json:"references"`
 	Metrics struct {
 		CvssMetricV31 []struct {
-			Source   string `json:"source"`
-			Type     string `json:"type"`
-			CvssData struct {
-				Version               string  `json:"version"`
-				VectorString          string  `json:"vectorString"`
-				AttackVector          string  `json:"attackVector"`
-				AttackComplexity      string  `json:"attackComplexity"`
-				PrivilegesRequired    string  `json:"privilegesRequired"`
-				UserInteraction       string  `json:"userInteraction"`
-				Scope                 string  `json:"scope"`
-				ConfidentialityImpact string  `json:"confidentialityImpact"`
-				IntegrityImpact       string  `json:"integrityImpact"`
-				AvailabilityImpact    string  `json:"availabilityImpact"`
-				BaseScore             float64 `json:"baseScore"`
-				BaseSeverity          string  `json:"baseSeverity"`
-			} `json:"cvssData"`
-			ExploitabilityScore float64 `json:"exploitabilityScore"`
-			ImpactScore         float64 `json:"impactScore"`
+			Source              string   `json:"source"`
+			Type                string   `json:"type"`
+			CvssData            CvssData `json:"cvssData"`
+			ExploitabilityScore float64  `json:"exploitabilityScore,omitempty"`
+			ImpactScore         float64  `json:"impactScore,omitempty"`
 		} `json:"cvssMetricV31"`
+		CvssMetricV3 []struct {
+			Source              string   `json:"source"`
+			Type                string   `json:"type"`
+			CvssData            CvssData `json:"cvssData"`
+			ExploitabilityScore float64  `json:"exploitabilityScore,omitempty"`
+			ImpactScore         float64  `json:"impactScore,omitempty"`
+		}
 		CvssMetricV2 []struct {
 			Source   string `json:"source"`
 			Type     string `json:"type"`
@@ -78,14 +72,14 @@ type Cve struct {
 				AvailabilityImpact    string  `json:"availabilityImpact"`
 				BaseScore             float64 `json:"baseScore"`
 			} `json:"cvssData"`
-			BaseSeverity            string  `json:"baseSeverity"`
-			ExploitabilityScore     float64 `json:"exploitabilityScore"`
-			ImpactScore             float64 `json:"impactScore"`
-			AcInsufInfo             bool    `json:"acInsufInfo"`
-			ObtainAllPrivilege      bool    `json:"obtainAllPrivilege"`
-			ObtainUserPrivilege     bool    `json:"obtainUserPrivilege"`
-			ObtainOtherPrivilege    bool    `json:"obtainOtherPrivilege"`
-			UserInteractionRequired bool    `json:"userInteractionRequired"`
+			BaseSeverity            string  `json:"baseSeverity,omitempty"`
+			ExploitabilityScore     float64 `json:"exploitabilityScore,omitempty"`
+			ImpactScore             float64 `json:"impactScore,omitempty"`
+			AcInsufInfo             bool    `json:"acInsufInfo,omitempty"`
+			ObtainAllPrivilege      bool    `json:"obtainAllPrivilege,omitempty"`
+			ObtainUserPrivilege     bool    `json:"obtainUserPrivilege,omitempty"`
+			ObtainOtherPrivilege    bool    `json:"obtainOtherPrivilege,omitempty"`
+			UserInteractionRequired bool    `json:"userInteractionRequired,omitempty"`
 		} `json:"cvssMetricV2"`
 	} `json:"metrics,omitempty"`
 	Weaknesses []struct {
@@ -120,6 +114,39 @@ type Cve struct {
 type LangString struct {
 	Lang  string `json:"lang"`
 	Value string `json:"value"`
+}
+
+type CvssData struct {
+	Version                       string  `json:"version"`
+	VectorString                  string  `json:"vectorString"`
+	AttackVector                  string  `json:"attackVector,omitempty"`
+	AttackComplexity              string  `json:"attackComplexity,omitempty"`
+	PrivilegesRequired            string  `json:"privilegesRequired,omitempty"`
+	UserInteraction               string  `json:"userInteraction,omitempty"`
+	Scope                         string  `json:"scope,omitempty"`
+	ConfidentialityImpact         string  `json:"confidentialityImpact,omitempty"`
+	IntegrityImpact               string  `json:"integrityImpact,omitempty"`
+	AvailabilityImpact            string  `json:"availabilityImpact,omitempty"`
+	BaseScore                     float64 `json:"baseScore"`
+	BaseSeverity                  string  `json:"baseSeverity"`
+	ExploitCodeMaturity           string  `json:"exploitCodeMaturity,omitempty"`
+	RemediationLevel              string  `json:"remediationLevel,omitempty"`
+	ReportConfidence              string  `json:"reportConfidence,omitempty"`
+	TemporalScore                 float64 `json:"temporalScore,omitempty"`
+	TemporalSeverity              string  `json:"temporalSeverity,omitempty"`
+	ConfidentialityRequirement    string  `json:"confidentialityRequirement,omitempty"`
+	IntegrityRequirement          string  `json:"integrityRequirement,omitempty"`
+	AvailabilityRequirement       string  `json:"availabilityRequirement,omitempty"`
+	ModifiedAttackVector          string  `json:"modifiedAttackVector,omitempty"`
+	ModifiedAttackComplexity      string  `json:"modifiedAttackComplexity,omitempty"`
+	ModifiedPrivilegesRequired    string  `json:"modifiedPrivilegesRequired,omitempty"`
+	ModifiedUserInteraction       string  `json:"modifiedUserInteraction,omitempty"`
+	ModifiedScope                 string  `json:"modifiedScope,omitempty"`
+	ModifiedConfidentialityImpact string  `json:"modifiedConfidentialityImpact,omitempty"`
+	ModifiedIntegrityImpact       string  `json:"modifiedIntegrityImpact,omitempty"`
+	ModifiedAvailabilityImpact    string  `json:"modifiedAvailabilityImpact,omitempty"`
+	EnvironmentalScore            float64 `json:"environmentalScore,omitempty"`
+	EnvironmentalSeverity         string  `json:"environmentalSeverity,omitempty"`
 }
 
 type NVDFeed struct {
