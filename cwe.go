@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"os"
 	"path"
+
+	fileutil "github.com/projectdiscovery/utils/file"
 )
 
 const (
@@ -17,7 +19,7 @@ const (
 // FetchCWE fetches CWE archive
 func (c *Client) FetchCWE() (cwes WeaknessCatalog, err error) {
 	p := path.Join(c.feedDir, "cwe.xml.zip")
-	exists := fileExists(p)
+	exists := fileutil.FileExists(p)
 	if !exists {
 		u := nvdCWEFeed
 		resp, err := http.Get(u)
@@ -33,7 +35,7 @@ func (c *Client) FetchCWE() (cwes WeaknessCatalog, err error) {
 		defer f.Close()
 
 		raw, _ := ioutil.ReadAll(resp.Body)
-		f.Write(raw)
+		_, _ = f.Write(raw)
 	}
 
 	// Open and unzip file to WeaknessCatalog struct
