@@ -9,6 +9,10 @@ type Client struct {
 	feedDir string
 }
 
+type ClientV2 struct {
+	endpoint string
+}
+
 func NewClient(baseDir string) (cl *Client, err error) {
 	if baseDir == "" {
 		baseDir = os.Getenv("PWD")
@@ -25,4 +29,10 @@ func NewClient(baseDir string) (cl *Client, err error) {
 	return &Client{
 		feedDir: feedDir,
 	}, nil
+}
+
+func NewClientV2() (cl *ClientV2) {
+	return &ClientV2{
+		endpoint: "https://services.nvd.nist.gov/rest/json/cves/2.0",
+	}
 }
