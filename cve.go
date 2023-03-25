@@ -19,7 +19,7 @@ var CVERxStrict = regexp.MustCompile(`^CVE-\d{4}-(0\d{3}|[1-9]\d{3,})$`) // Stri
 func (c *ClientV2) FetchCVE(cveID string) (Vulnerability, error) {
 	resp, err := http.Get(fmt.Sprintf("%s?cveId=%s", c.endpoint, cveID))
 	if err != nil {
-		return Vulnerability{}, err
+		return Vulnerability{}, fmt.Errorf("error on HTTP GET: %v", err)
 	}
 	if resp.Body == nil {
 		return Vulnerability{}, fmt.Errorf("no CVE found for %s", cveID)
@@ -33,7 +33,7 @@ func (c *ClientV2) FetchCVE(cveID string) (Vulnerability, error) {
 	var cveData CVEResults
 	err = json.Unmarshal(body, &cveData)
 	if err != nil {
-		return Vulnerability{}, err
+		return Vulnerability{}, fmt.Errorf("error unmarshaling JSON: %v", err)
 	}
 	numCves := len(cveData.Vulnerabilities)
 	if numCves != 1 {
