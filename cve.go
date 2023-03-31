@@ -17,7 +17,7 @@ var CVERxLoose = regexp.MustCompile(`CVE[^\w]*\d{4}[^\w]+\d{4,}`)        // Loos
 var CVERxStrict = regexp.MustCompile(`^CVE-\d{4}-(0\d{3}|[1-9]\d{3,})$`) // Strict
 
 func (c *ClientV2) FetchCVE(cveID string) (Vulnerability, error) {
-	resp, err := http.Get(fmt.Sprintf("%s?cveId=%s", c.endpoint, cveID))
+	resp, err := c.authedGet(fmt.Sprintf("%s?cveId=%s", c.endpoint, cveID))
 	if err != nil {
 		return Vulnerability{}, fmt.Errorf("error on HTTP GET: %v", err)
 	}
@@ -40,6 +40,17 @@ func (c *ClientV2) FetchCVE(cveID string) (Vulnerability, error) {
 		return Vulnerability{}, fmt.Errorf("unexpected output from NVD. Expecting exactly 1 vulnerability, got %d", numCves)
 	}
 	return cveData.Vulnerabilities[0], nil
+}
+
+func (c *ClientV2) authedGet(url string) (*http.Response, error) {
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return &http.Response{}, fmt.Errorf("cannot make http get request: %v", err)
+	}
+	req.Header.Set("apiKey", c.apiKey)
+
+	return client.Do(req)
 }
 
 // IsCVEIDLoose matches on "Loose" specification from MITRE, and ensures that

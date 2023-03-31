@@ -12,7 +12,7 @@ import (
 )
 
 func TestFetchCVEv2(t *testing.T) {
-	cliv2 := NewClientV2()
+	cliv2 := NewClientV2(os.Getenv("NVD_API_KEY"))
 	testCases := []string{"CVE-2019-1010218", "CVE-2022-0149"}
 
 	for _, cveId := range testCases {
