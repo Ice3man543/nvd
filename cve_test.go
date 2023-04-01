@@ -12,7 +12,11 @@ import (
 )
 
 func TestFetchCVEv2(t *testing.T) {
-	cliv2 := NewClientV2(os.Getenv("NVD_API_KEY"))
+	apiKey, ok := os.LookupEnv("NVD_API_KEY")
+	if !ok {
+		t.Fatal("NVD API key not passed as environment variable")
+	}
+	cliv2 := NewClientV2(apiKey)
 	testCases := []string{"CVE-2019-1010218", "CVE-2022-0149"}
 
 	for _, cveId := range testCases {
