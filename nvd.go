@@ -11,6 +11,7 @@ type Client struct {
 
 type ClientV2 struct {
 	endpoint string
+	apiKey   string
 }
 
 func NewClient(baseDir string) (cl *Client, err error) {
@@ -31,8 +32,9 @@ func NewClient(baseDir string) (cl *Client, err error) {
 	}, nil
 }
 
-func NewClientV2() (cl *ClientV2) {
+func NewClientV2(apiKey string) (cl *ClientV2) {
 	return &ClientV2{
 		endpoint: "https://services.nvd.nist.gov/rest/json/cves/2.0",
+		apiKey:   apiKey,
 	}
 }
