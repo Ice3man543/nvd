@@ -16,6 +16,7 @@ func TestFetchCVEv2(t *testing.T) {
 	if !ok {
 		t.Fatal("NVD API key not passed as environment variable")
 	}
+
 	cliv2 := NewClientV2(apiKey)
 	testCases := []string{"CVE-2019-1010218", "CVE-2022-0149"}
 
