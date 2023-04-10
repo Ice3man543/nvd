@@ -282,3 +282,30 @@ type CPEMatchFeed struct {
 type CPEMatch struct {
 	CPE23URI string `json:"cpe23Uri"`
 }
+
+type CPEV1Data struct {
+	ResultsPerPage int `json:"resultsPerPage"`
+	StartIndex     int `json:"startIndex"`
+	TotalResults   int `json:"totalResults"`
+	Result         struct {
+		DataType      string `json:"dataType"`
+		FeedVersion   string `json:"feedVersion"`
+		CpeCount      int    `json:"cpeCount"`
+		FeedTimestamp string `json:"feedTimestamp"`
+		Cpes          []struct {
+			Deprecated       bool   `json:"deprecated"`
+			Cpe23URI         string `json:"cpe23Uri"`
+			LastModifiedDate string `json:"lastModifiedDate"`
+			Titles           []struct {
+				Title string `json:"title"`
+				Lang  string `json:"lang"`
+			} `json:"titles"`
+			Refs []struct {
+				Ref  string `json:"ref"`
+				Type string `json:"type"`
+			} `json:"refs"`
+			DeprecatedBy    []interface{} `json:"deprecatedBy"`
+			Vulnerabilities []string      `json:"vulnerabilities"`
+		} `json:"cpes"`
+	} `json:"result"`
+}

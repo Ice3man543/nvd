@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -140,6 +141,29 @@ func TestIsCVEID(t *testing.T) {
 		ok := IsCVEID(cveID)
 		if ok {
 			t.Errorf("got valid; want invalid: %s", cveID)
+		}
+	}
+}
+
+func TestCPEMatchedCVEIDs(t *testing.T) {
+	testcases := []struct {
+		cpeMatchedString string
+		expected         string
+	}{
+		{
+			cpeMatchedString: "cpe:2.3:a:glpi-project:glpi:9.5.5",
+			expected:         `CVE-2021-39209,CVE-2021-39210,CVE-2021-39211,CVE-2021-39213,CVE-2022-21719,CVE-2022-21720,CVE-2022-24867,CVE-2022-24868,CVE-2022-31061,CVE-2022-31143,CVE-2022-31187,CVE-2022-35914,CVE-2022-35945,CVE-2022-35946,CVE-2022-35947,CVE-2022-36112,CVE-2022-39234,CVE-2022-39262,CVE-2022-39276,CVE-2022-39277,CVE-2022-39323,CVE-2022-39370,CVE-2022-39372,CVE-2022-39375,CVE-2022-39376,CVE-2022-41941,CVE-2023-22722,CVE-2023-22725,CVE-2023-23610`,
+		},
+	}
+	for _, test := range testcases {
+		cpeClient := NewCpeClientV1()
+		cveIds, err := cpeClient.FetchCpeMatchedCveIds(test.cpeMatchedString)
+		if err != nil {
+			t.Errorf("Expected: %v\n but got error: %v", test.expected, err)
+		}
+		actual := strings.Join(cveIds, ",")
+		if !strings.Contains(actual, test.expected) {
+			t.Errorf("Expected as prefix: %v\n but got: %v", test.expected, actual)
 		}
 	}
 }

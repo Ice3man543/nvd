@@ -5,13 +5,52 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"path"
 	"strings"
 
+	errorutil "github.com/projectdiscovery/utils/errors"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
+
+type CpeClientV1 struct {
+	endpoint string
+}
+
+func NewCpeClientV1() *CpeClientV1 {
+	return &CpeClientV1{
+		endpoint: "https://services.nvd.nist.gov/rest/json/cpes/1.0",
+	}
+}
+
+// FetchCpeMatchedCveIds returns all the cve vulnerabilities for the cpeMatchString
+func (cpe *CpeClientV1) FetchCpeMatchedCveIds(cpeMatchString string) ([]string, error) {
+	url := fmt.Sprintf("%v/?cpeMatchString=%v&addOns=cves", cpe.endpoint, cpeMatchString)
+	cveIds := []string{}
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return cveIds, errorutil.New("Could not make http request: %v", err)
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return cveIds, err
+	}
+	defer resp.Body.Close()
+
+	var data CPEV1Data
+	err = json.NewDecoder(resp.Body).Decode(&data)
+	if err != nil {
+		return cveIds, errorutil.New("JSON parse error: %v", err)
+	}
+
+	for _, cpe := range data.Result.Cpes {
+		cveIds = append(cveIds, cpe.Vulnerabilities...)
+	}
+	return cveIds, nil
+}
 
 // VendorsProducts parse CPEs and returns slice of Vendors containing Products
 func (cve *CVEItem) VendorsProducts() []Vendor {
